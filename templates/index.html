@@ -7,11 +7,42 @@
 </form>
 
 <h3>Add From Video</h3>
-<form action="/add-video" method="POST" enctype="multipart/form-data">
+<form id="videoForm" action="/add-video" method="POST" enctype="multipart/form-data">
   <input type="text" name="name" placeholder="Person name" required>
   <input type="file" name="video" accept="video/*" required>
   <button type="submit">Upload Video</button>
 </form>
+
+<div id="videoResult"></div>
+
+<script>
+document.getElementById("videoForm").onsubmit = async (e)=>{
+    e.preventDefault();
+
+    videoResult.innerHTML = "Processing video... please wait ⏳";
+
+    let r = await fetch("/add-video", {
+        method:"POST",
+        body:new FormData(e.target)
+    });
+
+    let res = await r.json();
+
+    videoResult.innerHTML = `
+        <h3>Extracted Faces (${res.saved})</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:10px"></div>
+    `;
+
+    let box = videoResult.querySelector("div");
+
+    res.faces.forEach(f=>{
+        box.innerHTML += `
+            <img src="${f}" width="140" style="border:1px solid gray;border-radius:6px">
+        `;
+    });
+};
+</script>
+
 
 
 

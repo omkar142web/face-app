@@ -157,6 +157,7 @@ def add_video():
     cap = cv2.VideoCapture(path)
     frame_count = 0
     saved = 0
+    saved_faces_paths = []
 
     while True:
         ret, frame = cap.read()
@@ -164,8 +165,6 @@ def add_video():
             break
 
         frame_count += 1
-        
-        # grab every 10th frame (prevents too many)
         if frame_count % 10 != 0:
             continue
 
@@ -176,13 +175,18 @@ def add_video():
         if embedding:
             insert_face(name, temp_path, embedding)
             saved += 1
+            saved_faces_paths.append("/" + temp_path)
 
-        if saved >= 10: 
+        if saved >= 10:
             break
 
     cap.release()
 
-    return f"Video processed — {saved} face samples stored 👍"
+    return jsonify({
+        "saved": saved,
+        "faces": saved_faces_paths
+    })
+
 
 
 if __name__ == "__main__":
