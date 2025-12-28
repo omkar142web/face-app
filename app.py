@@ -113,6 +113,33 @@ def find_match():
     })
 
 
+
+@app.route("/scan-faces")
+def scan_faces():
+    import os
+    
+    base = app.config["FACE_FOLDER"]
+
+    count = 0
+
+    for person in os.listdir(base):
+        person_path = os.path.join(base, person)
+
+        if not os.path.isdir(person_path):
+            continue
+        
+        for img in os.listdir(person_path):
+            path = os.path.join(person_path, img)
+
+            embedding = extract_embedding(path)
+            if not embedding:
+                continue
+
+            insert_face(person, path, embedding)
+            count += 1
+
+    return f"Scanned & Stored {count} faces 👍"
+
     
 
 if __name__ == "__main__":
