@@ -188,6 +188,25 @@ def add_video():
     })
 
 
+@app.route("/delete-face", methods=["POST"])
+def delete_face():
+    image = request.form["image"]
+
+    # delete file
+    if os.path.exists(image):
+        os.remove(image)
+
+    # delete from DB
+    import sqlite3
+    con = sqlite3.connect("faces.db")
+    cur = con.cursor()
+    cur.execute("DELETE FROM faces WHERE image_path=?", (image,))
+    con.commit()
+    con.close()
+
+    return "Deleted successfully"
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
