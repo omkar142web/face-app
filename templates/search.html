@@ -5,6 +5,10 @@
   <button type="submit">Search</button>
 </form>
 
+<h3>Delete Person</h3>
+<input id="delName" placeholder="Enter person name">
+<button onclick="deletePerson()">Delete</button>
+
 <h3 id="result"></h3>
 <div id="list"></div>
 
@@ -58,9 +62,26 @@ async function deleteFace(path){
   alert(await res.text());
   location.reload();
 }
-</script>
+
+//  <script> 
 
 
 
+    async function deletePerson(){
+    let name = document.getElementById("delName").value;
+    if(!name) return alert("Enter name");
+
+    let f = new FormData();
+    f.append("name", name);
+
+    let res = await fetch("/delete-person", {
+        method: "POST",
+        body: f
+    });
+
+    alert(await res.text());
+    location.reload();
+    }
+    
 </script>
 

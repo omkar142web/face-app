@@ -1,3 +1,5 @@
+from database import init_db, insert_face, get_all_faces, delete_person, delete_face
+
 from flask import Flask, render_template, request, redirect, jsonify
 from deepface import DeepFace
 import numpy as np
@@ -205,6 +207,29 @@ def delete_face():
     con.close()
 
     return "Deleted successfully"
+
+@app.route("/delete-person", methods=["POST"])
+def delete_person_route():
+    name = request.form.get("name")
+
+    if not name:
+        return "Name required", 400
+
+    # get all faces first
+    faces = get_all_faces()
+
+    found = False
+    for _, n, img, _ in faces:
+        if n == name:
+            found = True
+            if os.path.exists(img):
+                os.remove(img)
+
+    if not found:
+        return "Person not found"
+
+    delete_person(name)
+    return "Person deleted successfully"
 
 
 
