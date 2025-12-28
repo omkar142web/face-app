@@ -1,0 +1,31 @@
+<h2>Find Person</h2>
+
+<form id="form" enctype="multipart/form-data">
+  <input type="file" name="image" required>
+  <button type="submit">Search</button>
+</form>
+
+<h3 id="result"></h3>
+
+<script>
+document.getElementById("form").onsubmit = async (e)=>{
+  e.preventDefault();
+
+  let formData = new FormData(e.target);
+
+  let r = await fetch("/find", {method:"POST", body:formData});
+  let res = await r.json();
+
+  if(!res.match){
+    result.innerText = "No Match Found 😔";
+  } else {
+    result.innerHTML = `
+      Match Found 🎯 <br>
+      Name: ${res.result.name} <br>
+      Confidence Score: ${res.result.score}
+      <br><br>
+      <img src="/${res.result.image}" width="200">
+    `;
+  }
+}
+</script>
