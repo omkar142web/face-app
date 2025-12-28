@@ -141,6 +141,49 @@ def scan_faces():
     return f"Scanned & Stored {count} faces 👍"
 
     
+@app.route("/add-video", methods=["POST"])
+def add_video():
+    name = request.form.get("name", "Unknown")
+    file = request.files["video"]
+
+    if not file:
+        return "No file", 400
+
+    filename = str(uuid.uuid4()) + ".mp4"
+    path = os.path.join("videos", filename)
+    os.makedirs("videos", exist_ok=True)
+    file.save(path)
+
+    cap = cv2.VideoCapture(path)
+    frame_count = 0
+    saved = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame_count += 1
+        
+        # grab every 10th frame (prevents too many)
+        if frame_count % 10 != 0:
+            continue
+
+        temp_path = f"faces/{name}_{uuid.uuid4()}.jpg"
+        cv2.imwrite(temp_path, frame)
+
+        embedding = extract_embedding(temp_path)
+        if embedding:
+            insert_face(name, temp_path, embedding)
+            saved += 1
+
+        if saved >= 10: 
+            break
+
+    cap.release()
+
+    return f"Video processed — {saved} face samples stored 👍"
+
 
 if __name__ == "__main__":
     app.run(debug=True)
