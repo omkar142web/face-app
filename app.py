@@ -82,12 +82,10 @@ def find_match():
     for fid, name, image_path, embedding in faces:
         emb = np.array(eval(embedding))
 
-        # cosine similarity
         score = np.dot(query_embedding, emb) / (
             np.linalg.norm(query_embedding) * np.linalg.norm(emb)
         )
 
-        # convert similarity to confidence (0-100%)
         confidence = float(max(0, min(1, score))) * 100
 
         results.append({
@@ -96,14 +94,24 @@ def find_match():
             "confidence": round(confidence, 2)
         })
 
+    # ------------------------------------
+    # 🔥 NEW PART — GROUP BY PERSON (BEST HIT)
+    # ------------------------------------
+    best = {}
+    for r in results:
+        if r["name"] not in best or r["confidence"] > best[r["name"]]["confidence"]:
+            best[r["name"]] = r
+
+    results = list(best.values())
     results.sort(key=lambda x: x["confidence"], reverse=True)
 
     top = results[:5]
 
     return jsonify({
-        "match": True if top[0]["confidence"] > 70 else False,
+        "match": True if top and top[0]["confidence"] > 70 else False,
         "results": top
     })
+
 
     
 
