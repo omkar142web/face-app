@@ -47,7 +47,7 @@ def add_face():
 
     return "Face Stored Successfully 👍"
 
- 
+
 @app.route("/search")
 def search_page():
     return render_template("search.html")
