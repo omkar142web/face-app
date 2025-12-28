@@ -7,9 +7,16 @@ import uuid
 
 from database import init_db, insert_face, get_all_faces
 
+from flask import send_from_directory
+
+
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["FACE_FOLDER"] = "faces"
+
+@app.route('/faces/<path:filename>')
+def serve_faces(filename):
+    return send_from_directory('faces', filename)
 
 init_db()
 
