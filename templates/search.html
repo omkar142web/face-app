@@ -37,7 +37,10 @@ document.getElementById("form").onsubmit = async (e)=>{
   list.innerHTML += `
     <div style="margin:10px;padding:10px;border:1px solid gray">
       <img src="/${p.image}" width="120"><br>
-      <b>${p.name}</b><br>
+      <a href="/person/${p.name}">
+        <b>${p.name}</b>
+       </a><br>
+
       Confidence: ${p.confidence}%<br>
 
       <button onclick="deleteFace('${p.image}')">

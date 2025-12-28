@@ -231,6 +231,34 @@ def delete_person_route():
     delete_person(name)
     return "Person deleted successfully"
 
+@app.route("/person/<name>")
+def view_person(name):
+    import urllib.parse
+    decoded_name = urllib.parse.unquote(name)
+
+    faces = get_all_faces()
+
+    images = []
+    for _, n, img, _ in faces:
+        if n.lower().strip() == decoded_name.lower().strip():
+            images.append(img)
+
+    return render_template("person.html", name=decoded_name, images=images)
+
+
+from database import delete_face_by_image
+
+@app.route("/delete-photo", methods=["POST"])
+def delete_photo():
+    image_path = request.form["image"]
+
+    if os.path.exists(image_path):
+        os.remove(image_path)
+
+    delete_face_by_image(image_path)
+
+    return redirect(request.referrer)
+
 
 
 if __name__ == "__main__":

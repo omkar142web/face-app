@@ -1,6 +1,19 @@
-import sqlite3
 import json
+import sqlite3
 import os
+
+# 🔥 Use ONLY ONE DATABASE everywhere
+DB = os.path.join(os.path.dirname(__file__), "models.db")
+
+
+def delete_face_by_image(image_path):
+    conn = sqlite3.connect(DB)
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM faces WHERE image_path=?", (image_path,))
+    conn.commit()
+    conn.close()
+
 
 # Database file name
 DB = "models.db"

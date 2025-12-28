@@ -1,0 +1,28 @@
+<h2>Photos of {{ name }}</h2>
+
+<a href="/search">⬅ Back</a>
+
+<div style="display:flex;flex-wrap:wrap;gap:15px;margin-top:20px">
+
+{% for img in images %}
+  <div style="border:1px solid gray;padding:10px;text-align:center">
+
+    <img src="/{{ img }}" width="160"><br>
+
+    <form action="/delete-photo" method="POST" style="margin-top:10px">
+      <input type="hidden" name="image" value="{{ img }}">
+      <button type="submit">Delete</button>
+    </form>
+
+  </div>
+{% endfor %}
+</div>
+
+{% if images|length == 0 %}
+  <h3>No photos stored for this person 🙃</h3>
+{% endif %}
+
+
+<!-- {% for img in images %}
+    <img src="/{{ img }}" width="160">
+{% endfor %} -->
