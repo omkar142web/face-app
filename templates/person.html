@@ -1,6 +1,13 @@
 <h2>Photos of {{ name }}</h2>
 
 <a href="/search">⬅ Back</a>
+<h2>{{ name }}</h2>
+
+<form action="/rename-person" method="POST" style="margin-bottom:20px">
+  <input type="hidden" name="old" value="{{ name }}">
+  <input name="new" placeholder="New name" required>
+  <button type="submit">Rename</button>
+</form>
 
 <div style="display:flex;flex-wrap:wrap;gap:15px;margin-top:20px">
 

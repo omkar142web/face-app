@@ -2,10 +2,11 @@ from database import init_db, insert_face, get_all_faces, delete_person, delete_
 
 from flask import Flask, render_template, request, redirect, jsonify
 from deepface import DeepFace
-import numpy as np
+import numpy as np  
 import os
 import cv2
 import uuid
+import shutil
 
 from database import init_db, insert_face, get_all_faces
 
@@ -258,6 +259,34 @@ def delete_photo():
     delete_face_by_image(image_path)
 
     return redirect(request.referrer)
+
+from database import rename_person
+@app.route("/rename-person", methods=["POST"])
+def rename_person_route():
+    old = request.form.get("old")
+    new = request.form.get("new")
+
+    if not old or not new:
+        return "Invalid", 400
+
+    old_folder = os.path.join("faces", old)
+    new_folder = os.path.join("faces", new)
+
+    # rename folder if exists
+    if os.path.exists(old_folder):
+        if os.path.exists(new_folder):
+            # if new exists → merge (optional, for now we just move files)
+            for f in os.listdir(old_folder):
+                shutil.move(os.path.join(old_folder, f), new_folder)
+            os.rmdir(old_folder)
+        else:
+            os.rename(old_folder, new_folder)
+
+    # update DB
+    # from database import rename_person
+    rename_person(old, new)
+
+    return redirect(f"/person/{new}")
 
 
 

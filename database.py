@@ -94,3 +94,24 @@ def delete_face(image_path):
 
     conn.commit()
     conn.close()
+
+
+def rename_person(old_name, new_name):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    # update name
+    c.execute(
+        "UPDATE faces SET name=? WHERE name=?",
+        (new_name, old_name)
+    )
+
+    # update stored image paths too
+    c.execute(
+        "UPDATE faces SET image_path = REPLACE(image_path, ?, ?) WHERE image_path LIKE ?",
+        (f"faces/{old_name}", f"faces/{new_name}", f"%faces/{old_name}%")
+    )
+
+    conn.commit()
+    conn.close()
+
